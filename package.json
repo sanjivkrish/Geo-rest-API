@@ -5,6 +5,8 @@
   "scripts": {
     "start": "node app.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "koa": "^2.5.1"
+  },
   "devDependencies": {}
 }
