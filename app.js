@@ -1,6 +1,10 @@
 const Koa = require('koa');
+const bodyParser = require('koa-bodyparser');
 const router = require('./routes');
 const app = new Koa();
+
+// Body parser to access data from request
+app.use(bodyParser());
 
 // Use routes from the 'routes.js'
 app.use(router());
