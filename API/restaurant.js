@@ -44,4 +44,39 @@ router.post('/', async (ctx, next) => {
   }
 })
 
+// Update a restaurant info
+router.put('/:restaurantId', async (ctx, next) => {
+  const restaurantId = parseInt(ctx.params.restaurantId);
+  let restaurantInfo = ctx.request.body;
+
+  if (validateRestaurantInfo(restaurantInfo)) {
+    let isInfoAvailable = false;
+
+    // Loop through available restaurant info and update
+    for (var i = 0; i < restaurantList.length; i++) {
+      if (restaurantList[i] !== null &&
+          restaurantList[i].id === restaurantId) {
+            restaurantInfo.id = restaurantId;
+            restaurantInfo.lat = parseFloat(restaurantInfo.lat);
+            restaurantInfo.long = parseFloat(restaurantInfo.long);
+
+            // Update list
+            restaurantList[i] = restaurantInfo;
+            isInfoAvailable = true;
+          }
+    }
+
+    if (isInfoAvailable) {
+      ctx.status = 204;
+      ctx.body = 'Update successful';
+    } else {
+      ctx.status = 404;
+      ctx.body = 'Restaurant not found';
+    }
+  } else {
+    ctx.status = 400;
+    ctx.body = 'Invalid Input';
+  }
+})
+
 module.exports = router;
