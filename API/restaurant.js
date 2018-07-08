@@ -1,9 +1,6 @@
 const Router = require ('koa-router');
 const router = new Router({ prefix: '/restaurant' });
 
-// Store restaurant details / Replaced by DB later
-let restaurantList = [];
-
 // Validate user input
 validateRestaurantInfo = (restaurantInfo) => {
   // Info must have name, lat, long
@@ -134,6 +131,8 @@ router.get('/search', async (ctx, next) => {
 
   // Validate input query
   if (validateQuery(ctx.query)) {
+    let restaurantList = await global.db.find({}).toArray();
+
     // Evaluate all restaurant against user query
     let queriedRestaurantList = searchRestaurantInRange (restaurantList, query);
 
