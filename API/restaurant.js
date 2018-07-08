@@ -77,8 +77,8 @@ router.post('/', async (ctx, next) => {
     restaurantInfo.lat = parseFloat(restaurantInfo.lat);
     restaurantInfo.long = parseFloat(restaurantInfo.long);
 
-    // Add to the restaurant list / Later replaced by DB
-    restaurantList.push(restaurantInfo);
+    // Add to the restaurant list
+    await global.db.insert(restaurantInfo);
     ctx.status = 201;
   } else {
     ctx.status = 400;
