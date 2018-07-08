@@ -19,6 +19,48 @@ validateRestaurantInfo = (restaurantInfo) => {
       }
 };
 
+// Validate user query
+validateQuery = (query) => {
+  // Query must have radius, lat, long
+  // Lat, radius and long should be of type 'float'
+  if (query !== undefined &&
+      query.lat !== undefined &&
+      query.long !== undefined &&
+      query.radius !== undefined &&
+      (!isNaN(parseFloat(query.radius)) && isFinite(query.radius)) &&
+      (!isNaN(parseFloat(query.lat)) && isFinite(query.lat)) &&
+      (!isNaN(parseFloat(query.long)) && isFinite(query.long))) {
+        return true
+      } else {
+        return false
+      }
+};
+
+// Apply Math formula to figure out distance between two points
+distanceOf = (x1, x2, y1, y2) => {
+  return (Math.sqrt(Math.pow((y2 - y1), 2) + Math.pow((x2 - x1), 2)));
+};
+
+// Evaluate query on all restaurant info
+searchRestaurantInRange = (restaurantList, query) => {
+  let returnList = [];
+  let x1 = parseFloat(query.lat);
+  let y1 = parseFloat(query.long);
+
+  // Compare each restaurant with given radius
+  for (var i = 0; i < restaurantList.length; i++) {
+    let x2 = restaurantList[i].lat;
+    let y2 = restaurantList[i].long;
+
+    // Add if restaurant resides within radius
+    if (distanceOf(x1, x2, y1, y2) < parseFloat(query.radius)) {
+      returnList.push(restaurantList[i]);
+    }
+  }
+
+  return returnList;
+};
+
 // get available restaurant details
 router.get('/', async (ctx, next) => {
   ctx.status = 200;
@@ -98,6 +140,22 @@ router.delete('/:restaurantId', async (ctx, next) => {
   if (isInfoAvailable) {
     ctx.status = 204;
     ctx.body = 'Delete successful';
+  } else {
+    ctx.status = 404;
+  }
+})
+
+// get list restaurants within a certain radius
+router.get('/search', async (ctx, next) => {
+  let query = JSON.parse(JSON.stringify(ctx.query));
+
+  // Validate input query
+  if (validateQuery(ctx.query)) {
+    // Evaluate all restaurant against user query
+    let queriedRestaurantList = searchRestaurantInRange (restaurantList, query);
+
+    ctx.status = 200;
+    ctx.body = queriedRestaurantList;
   } else {
     ctx.status = 404;
   }
