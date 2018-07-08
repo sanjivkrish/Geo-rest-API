@@ -79,4 +79,28 @@ router.put('/:restaurantId', async (ctx, next) => {
   }
 })
 
+// Delete a restaurant info
+router.delete('/:restaurantId', async (ctx, next) => {
+  const restaurantId = parseInt(ctx.params.restaurantId);
+
+  let isInfoAvailable = false;
+
+  // Loop through available restaurant info and delete
+  for (var i = 0; i < restaurantList.length; i++) {
+    if (restaurantList[i] !== null &&
+        restaurantList[i].id === restaurantId) {
+          // Remove info from list
+          restaurantList.splice(i, 1);
+          isInfoAvailable = true;
+        }
+  }
+
+  if (isInfoAvailable) {
+    ctx.status = 204;
+    ctx.body = 'Delete successful';
+  } else {
+    ctx.status = 404;
+  }
+})
+
 module.exports = router;
