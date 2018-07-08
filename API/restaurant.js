@@ -114,23 +114,17 @@ router.put('/:restaurantId', async (ctx, next) => {
 router.delete('/:restaurantId', async (ctx, next) => {
   const restaurantId = parseInt(ctx.params.restaurantId);
 
-  let isInfoAvailable = false;
+  let restaurantList = await global.db.find({id: restaurantId}).toArray();
 
-  // Loop through available restaurant info and delete
-  for (var i = 0; i < restaurantList.length; i++) {
-    if (restaurantList[i] !== null &&
-        restaurantList[i].id === restaurantId) {
-          // Remove info from list
-          restaurantList.splice(i, 1);
-          isInfoAvailable = true;
-        }
-  }
+  if (restaurantList.length > 0) {
+    // Update in DB
+    await global.db.deleteOne({id: restaurantId})
 
-  if (isInfoAvailable) {
     ctx.status = 204;
     ctx.body = 'Delete successful';
   } else {
     ctx.status = 404;
+    ctx.body = 'Restaurant not found';
   }
 })
 
