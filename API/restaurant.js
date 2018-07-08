@@ -92,23 +92,12 @@ router.put('/:restaurantId', async (ctx, next) => {
   let restaurantInfo = ctx.request.body;
 
   if (validateRestaurantInfo(restaurantInfo)) {
-    let isInfoAvailable = false;
+    let restaurantList = await global.db.find({id: restaurantId}).toArray();
 
-    // Loop through available restaurant info and update
-    for (var i = 0; i < restaurantList.length; i++) {
-      if (restaurantList[i] !== null &&
-          restaurantList[i].id === restaurantId) {
-            restaurantInfo.id = restaurantId;
-            restaurantInfo.lat = parseFloat(restaurantInfo.lat);
-            restaurantInfo.long = parseFloat(restaurantInfo.long);
+    if (restaurantList.length > 0) {
+      // Update in DB
+      await global.db.update({id: restaurantId}, {$set : restaurantInfo})
 
-            // Update list
-            restaurantList[i] = restaurantInfo;
-            isInfoAvailable = true;
-          }
-    }
-
-    if (isInfoAvailable) {
       ctx.status = 204;
       ctx.body = 'Update successful';
     } else {
