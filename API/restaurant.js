@@ -64,7 +64,7 @@ searchRestaurantInRange = (restaurantList, query) => {
 // get available restaurant details
 router.get('/', async (ctx, next) => {
   ctx.status = 200;
-  ctx.body = restaurantList;
+  ctx.body = await global.db.find({}).toArray();
 })
 
 // Add a new restaurant
